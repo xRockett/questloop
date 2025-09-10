@@ -1,8 +1,0 @@
-
-node_modules
-.env
-api/node_modules
-web/node_modules
-api/dist
-web/.next
-.DS_Store
