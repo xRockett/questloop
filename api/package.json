@@ -1,0 +1,37 @@
+{
+  "name": "questloop-api",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "start:docker": "node dist/index.js",
+    "build": "tsc",
+    "prisma:push": "prisma db push",
+    "seed": "tsx src/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.18.0",
+    "argon2": "^0.40.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.13",
+    "rate-limiter-flexible": "^5.0.3",
+    "socket.io": "^4.7.5",
+    "zod": "^3.23.8",
+    "ioredis": "^5.4.1",
+    "otplib": "^12.0.1",
+    "@aws-sdk/client-s3": "^3.654.0",
+    "@aws-sdk/s3-request-presigner": "^3.654.0",
+    "web-push": "^3.6.7"
+  },
+  "devDependencies": {
+    "prisma": "^5.18.0",
+    "tsx": "^4.16.1",
+    "typescript": "^5.5.4"
+  }
+}

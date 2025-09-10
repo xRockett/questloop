@@ -1,0 +1,157 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  email        String   @unique
+  username     String   @unique
+  passwordHash String
+  bio          String   @default("")
+  avatarUrl    String   @default("")
+  bannerUrl    String   @default("")
+  verifiedAt   DateTime?
+  xp           Int      @default(0)
+  level        Int      @default(1)
+  posts        Post[]
+  comments     Comment[]
+  likes        Like[]
+  codes        VerificationCode[]
+}
+
+model VerificationCode {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  code      String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  usedAt    DateTime?
+  @@index([userId, code])
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  content   String
+  likeCount Int      @default(0)
+  comments  Comment[]
+  likes     Like[]
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  content   String
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  @@unique([postId, userId])
+}
+
+model XpEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  type      String   // POST, LIKE, COMMENT, STREAK
+  amount    Int
+}
+
+
+model Guild {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  name      String   @unique
+  bio       String   @default("")
+  ownerId   String
+  owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  members   GuildMember[]
+}
+
+model GuildMember {
+  id        String   @id @default(cuid())
+  userId    String
+  guildId   String
+  role      String   @default("member") // member, officer, owner
+  joinedAt  DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guild     Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  @@unique([userId, guildId])
+}
+
+model Season {
+  id        String   @id @default(cuid())
+  name      String
+  startsAt  DateTime
+  endsAt    DateTime
+  users     UserSeason[]
+}
+
+model UserSeason {
+  id        String   @id @default(cuid())
+  userId    String
+  seasonId  String
+  xp        Int      @default(0)
+  rank      Int?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  season    Season   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  @@unique([userId, seasonId])
+}
+
+model Badge {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  name      String
+  description String
+  icon      String   // emoji or URL
+  threshold Int      @default(0) // XP threshold or other rule
+}
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  badgeId   String
+  earnedAt  DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  @@unique([userId, badgeId])
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TwoFA {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  secret    String
+  enabled   Boolean  @default(false)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

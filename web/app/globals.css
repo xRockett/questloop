@@ -1,0 +1,22 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { --bg: 255 247 237; --fg: 17 24 39; }
+body { background: rgb(var(--bg)); color: rgb(var(--fg)); }
+.gradient { background: radial-gradient(1200px 600px at 20% 10%, #e9d5ff 0, transparent 60%), radial-gradient(800px 600px at 90% 20%, #a7f3d0 0, transparent 60%), radial-gradient(800px 600px at 50% 90%, #fde68a 0, transparent 60%); }
+.card { @apply rounded-2xl shadow-xl bg-white/70 backdrop-blur border border-white/40; }
+btn { @apply px-4 py-2 rounded-xl font-semibold; }
+.link { @apply underline hover:no-underline; }
+input, textarea { @apply w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white; }
+label { @apply text-sm font-medium text-gray-700; }
+.container { @apply max-w-3xl mx-auto px-4; }
+nav a { @apply px-3 py-2 rounded-lg hover:bg-white/60; }
+
+
+/* Themes */
+:root[data-theme='pastel'] { --bg: 255 247 237; --fg: 17 24 39; }
+:root[data-theme='midnight'] { --bg: 17 24 39; --fg: 248 250 252; }
+:root[data-theme='ocean'] { --bg: 240 249 255; --fg: 15 23 42; }
+.theme-toggle { @apply px-3 py-2 rounded-xl bg-white/70 border; }

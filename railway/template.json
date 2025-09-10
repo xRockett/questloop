@@ -1,0 +1,88 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "name": "QuestLoop",
+  "plugins": [
+    {
+      "name": "PostgreSQL"
+    },
+    {
+      "name": "Redis"
+    }
+  ],
+  "services": [
+    {
+      "name": "api",
+      "source": {
+        "path": "api"
+      },
+      "env": {
+        "DATABASE_URL": "{{PostgreSQL.URL}}",
+        "REDIS_URL": "{{Redis.URL}}",
+        "SMTP_HOST": "smtp.gmail.com",
+        "SMTP_PORT": "587",
+        "SMTP_USER": "",
+        "SMTP_PASS": "",
+        "EMAIL_FROM": "no-reply@questloop.local",
+        "JWT_SECRET": "change_me",
+        "PUBLIC_WEB_URL": "https://{{WEB_HOST}}",
+        "S3_ENDPOINT": "",
+        "S3_REGION": "auto",
+        "S3_ACCESS_KEY": "",
+        "S3_SECRET_KEY": "",
+        "S3_BUCKET": "questloop-media",
+        "VAPID_SUBJECT": "mailto:you@example.com",
+        "VAPID_PUBLIC_KEY": "",
+        "VAPID_PRIVATE_KEY": "",
+        "ADMIN_EMAIL": "admin@questloop.local",
+        "ADMIN_USERNAME": "AdminMaster",
+        "ADMIN_PASSWORD": "SetAReallyStrongPassword123!"
+      },
+      "build": {
+        "builder": "NIXPACKS"
+      },
+      "startCommand": "npx prisma migrate deploy && node dist/index.js",
+      "installCommand": "npm i && npx prisma generate && npm run build",
+      "healthcheckPath": "/health",
+      "ports": [
+        {
+          "port": 4000,
+          "handlers": [
+            "http"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "web",
+      "source": {
+        "path": "web"
+      },
+      "env": {
+        "NEXT_PUBLIC_API_URL": "https://{{API_HOST}}"
+      },
+      "build": {
+        "builder": "NIXPACKS"
+      },
+      "installCommand": "npm i",
+      "startCommand": "npm run build && npm run start",
+      "ports": [
+        {
+          "port": 3000,
+          "handlers": [
+            "http"
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "API_HOST": {
+      "description": "Public API host, e.g. questloop-api.up.railway.app",
+      "required": true
+    },
+    "WEB_HOST": {
+      "description": "Public WEB host, e.g. questloop.up.railway.app",
+      "required": true
+    }
+  }
+}
